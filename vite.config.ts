@@ -5,6 +5,9 @@ import {defineConfig} from 'vite';
 
 export default defineConfig(() => {
   return {
+    // GitHub Pages serves this project from https://<user>.github.io/Agent/,
+    // so asset URLs need the /Agent/ prefix when building for that target.
+    base: process.env.GH_PAGES_BUILD === 'true' ? '/Agent/' : '/',
     plugins: [react(), tailwindcss()],
     resolve: {
       alias: {
