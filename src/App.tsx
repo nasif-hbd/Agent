@@ -148,6 +148,11 @@ export default function App() {
   // JARVIS handoff state - a drafted email waiting to be reviewed in the Mail Composer
   const [pendingMailDraft, setPendingMailDraft] = useState<MailDraft | null>(null);
 
+  // GitHub Pages only serves static files - it can't run the Express/Gemini backend
+  // this app's AI features depend on. Flag that honestly instead of letting API calls fail silently.
+  const isStaticDemoHost = typeof window !== 'undefined' && window.location.hostname.endsWith('github.io');
+  const [showStaticBanner, setShowStaticBanner] = useState(true);
+
   useEffect(() => {
     const updateDiagnostics = () => {
       setDeviceInfo(getDeviceDiagnostics());
@@ -751,6 +756,16 @@ export default function App() {
     <div className={`min-h-screen flex flex-col transition-colors duration-300 ${
       theme === 'Black Modern' ? 'bg-[#0f172a] text-slate-100' : 'bg-slate-50 text-slate-800'
     }`}>
+      {isStaticDemoHost && showStaticBanner && (
+        <div className="flex items-center justify-between gap-3 px-4 py-2 text-[11px] font-medium bg-amber-500/10 border-b border-amber-500/20 text-amber-700 dark:text-amber-300">
+          <span>
+            <strong>Static demo:</strong> this GitHub Pages deployment has no live backend, so AI features (Central AI Monitor, JARVIS, Image Studio) won't respond. Run <code className="font-mono">npm run dev</code> locally with a <code className="font-mono">GEMINI_API_KEY</code> for the full app.
+          </span>
+          <button onClick={() => setShowStaticBanner(false)} className="flex-shrink-0 opacity-70 hover:opacity-100 cursor-pointer">
+            <X className="w-3.5 h-3.5" />
+          </button>
+        </div>
+      )}
       {/* Upper Navigation Header - Highly responsive, adaptive design to prevent clutter on mobile/tablets */}
       <header className={`py-2.5 px-4 sm:py-3.5 sm:px-6 border-b flex items-center justify-between transition-all ${
         theme === 'Black Modern' ? 'bg-[#1e293b] border-slate-800' : 'bg-white border-slate-200/80 shadow-xs'
